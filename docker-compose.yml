@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+
+  zookeeper:  # the configuration manager
+    hostname: zookeeper
+    container_name: zookeeper
+    image: 'bitnami/zookeeper:latest'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  db:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      # YOU HAVE TO CHANGE THE PATH!!!
+      - /home/$USER/nifi-python-oracle/data-postgres/pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    env_file:
+      - ./env.db.prod
+
+  nifi:
+    build:
+      context: ./nifi
+      dockerfile: Dockerfile
+    ports:
+      - 8080 # in case you want to deploy more than one node
+    env_file:
+      - ./env.prod
+    volumes:
+      # YOU HAVE TO CHANGE THE PATH!!!
+      - /home/$USER/nifi-python-oracle/data-volume:/home/nifi/data-volume
+
+volumes:
+  data-volume:
+  data-postgres:
