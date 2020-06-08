@@ -18,6 +18,10 @@ RUN pip3 install --upgrade pip
 COPY /requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install R
+RUN apt-get install r-base -y && apt-get install r-base-dev -y
+# Install R dependencies
+RUN R -e "install.packages('read.dbc',dependencies=TRUE, repos='http://cran.rstudio.com/')"
 
 # Install oracle dependecies
 RUN mkdir /opt/oracle
